@@ -96,3 +96,21 @@ f2(*args2,**kw)
 # 使用*args和**kw是Python的习惯写法，当然也可以用其他参数名，但最好使用习惯用法。
 # 命名的关键字参数是为了限制调用者可以传入的参数名，同时可以提供默认值。
 # 定义命名的关键字参数在没有可变参数的情况下不要忘了写分隔符*，否则定义的将是位置参数。
+
+
+
+def fact(n):
+    if n==1:
+        return 1
+    else:
+        return n*fact(n-1)
+print(fact(10))
+
+def move(n,a,b,c):
+    if n==1:
+        print(a,"->",c)
+    else:
+        move(n-1,a,c,b)
+        print(n,a,"->",c)
+        move(n-1,b,a,c)
+move(3,'A','B','C')
