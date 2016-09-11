@@ -12,3 +12,4 @@ elif bmi<32:
     print("obesity")
 else:
     print("too heavy")
+print('中文'.encode('utf-8'))
