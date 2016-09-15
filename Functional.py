@@ -1,4 +1,5 @@
 from functools import reduce
+import functools
 import math
 #Higher-order function高阶函数
 def fun(m,n,f):
@@ -81,7 +82,7 @@ def primes():
         it=filter(not_divisible(n),it)
 
 for n in primes():
-    if(n<100):
+    if(n<30):
         print(n)
     else:
         break
@@ -108,3 +109,132 @@ print(sorted(['kdg','KDGhg','anbgF','Kdfjg','erdaf'],key=str.lower))
 L = [('Bob', 75), ('Adam', 92), ('Bart', 66), ('Lisa', 88)]
 print(sorted(L,key=lambda x:x[0]))
 print(sorted(L,key=lambda x:x[1]))
+
+#返回函数
+#一个函数可以返回一个计算结果，也可以返回一个函数。
+#返回一个函数时，牢记该函数并未执行，返回函数中不要引用任何可能会变化的变量。
+
+def lazy_sum(*agrs):
+    def sum():
+        ax=0
+        for n in agrs:
+            ax+=n
+        return ax
+    return sum
+sumfun=lazy_sum(1,2,3,4,5,6,7,8,9)
+print(sumfun())
+
+#闭包
+
+def count():
+    fs=[]
+    for i in  range(1,4):
+        def f():
+            return i*i
+        fs.append(f)
+    return fs
+f1,f2,f3=count()
+print(f1(),f2(),f3())
+
+def count2():
+    def f(j):
+        def g():
+            return j*j
+        return g
+    fs=[]
+    for i in range(1,4):
+        fs.append(f(i))
+    return fs
+f11,f12,f13=count2()
+print(f11(),f12(),f13())
+
+#匿名函数
+#就是lambda表达式
+print(list(map(lambda x:x*x,[1,2,3,4,5,6,7])))
+
+#装饰器 decorator,在运行时添加功能
+#函数也是对象，可以赋值给变量
+def now():
+    print('2016-9-15')
+d=now
+d()
+print(now.__name__)
+
+def log(func):
+    def wrapper(*args,**kw):
+        print('call %s():'%func.__name__)
+        return func(*args,**kw)
+    return wrapper
+#观察上面的log，因为它是一个decorator，所以接受一个函数作为参数，并返回一个函数。
+#我们要借助Python的@语法，把decorator置于函数的定义处：
+@log
+def now2():
+    print('2016-9-15')
+now2()
+
+def log(text):
+    def decorator(func):
+        def wrapper(*args,**kw):
+            print('%s %s():'%(text,func.__name__))
+            return func(*args,**kw)
+        return wrapper
+    return decorator
+@log('execute')
+def now3():
+    print('2015-3-25')
+now3()
+print(now3.__name__)
+def log(func):
+    @functools.wraps(func)
+    def wrapper(*args,**kw):
+        print('call %s():'%func.__name__)
+        return func(*args,**kw)
+    return wrapper
+
+def log(text):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args,**kw):
+            print('%s %s():'%(text,func.__name__))
+            return func(*args,**kw)
+        return wrapper
+    return decorator
+        
+@log('exe')
+def now():
+    print('20000')
+now()
+print(now.__name__)
+
+#编写一个decorator，能在函数调用的前后打印出'begin call'和'end call'的日志。
+#再思考一下能否写出一个@log的decorator，使它既支持
+def log(func):
+    @functools.wraps(func)
+    def wrapper(*args,**kw):
+        print('call %s():'%func.__name__)
+        x= func(*args,**kw)
+        print('end call %s():'%func.__name__)
+        return x
+    return wrapper
+@log
+def now():
+    print('20000')
+now()
+print(now.__name__)
+
+def log(txt):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args,**kw):
+            print('%s %s():'%(txt,func.__name__))
+            print('begin call: log%s(%s)' % ('' if callable(txt) else "('%s')" % txt, func.__name__))
+            x= func(*args,**kw)
+            print("end call")
+            return x
+        return wrapper
+    return decorator(txt) if callable(txt) else decorator
+@log('bbbbbbbb')
+def now():
+    print('20000')
+now()
+print(now.__name__)
