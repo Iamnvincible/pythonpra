@@ -226,15 +226,22 @@ def log(txt):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args,**kw):
-            print('%s %s():'%(txt,func.__name__))
             print('begin call: log%s(%s)' % ('' if callable(txt) else "('%s')" % txt, func.__name__))
             x= func(*args,**kw)
             print("end call")
             return x
         return wrapper
     return decorator(txt) if callable(txt) else decorator
-@log('bbbbbbbb')
+@log('你好')
 def now():
     print('20000')
 now()
 print(now.__name__)
+
+#偏函数Partial function
+print(int('2334', base=16))
+
+int2=functools.partial(int,base=2)
+print(int2('1111111'))
+max2=functools.partial(max,10)
+print(max2(1,2,3,4,4))
